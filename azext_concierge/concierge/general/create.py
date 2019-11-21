@@ -36,6 +36,7 @@ def create_resources(organization, project, location, group_name,
         raise CLIError('A site-name parameter must be provided via --site-name or -s.')
 
     create_azure_devops_project(organization, project)
+    import_azure_devops_repo(organization, project)
     create_azure_resource_group(location, group_name)
     create_azure_resources(group_name, site_type, site_name)
 
@@ -52,11 +53,13 @@ def create_azure_devops_project(organization, project):
 
     execute_shell_process(message, cmd)
 
-def import_azure_devops_repo(organization):
+def import_azure_devops_repo(organization, project):
   message = 'Importing a default Azure Function sample repository...'
 
   cmd = [
       'az', 'repos', 'import', 'create',
+      '--project', project,
+      '--repository', project,
       '--git-source-url', DEFAULT_GIT_REPO_URI,
       '--organization', 'https://dev.azure.com/{}'.format(organization)
   ]
